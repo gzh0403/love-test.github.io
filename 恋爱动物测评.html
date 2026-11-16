@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>恋爱动物图鉴 · 找到你的恋爱动物人格</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#fff6f4;
+    --card:#ffffff;
+    --primary:#ff6b81;
+    --deep:#e8556e;
+    --soft:#ffe6eb;
+    --gold:#ffb84d;
+    --ink:#4a3a3a;
+    --muted:#9b8787;
+    --line:#f3e4e2;
+    --shadow:0 14px 34px rgba(232,85,110,.12);
+  }
+  html,body{height:100%}
+  body{
+    font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif;
+    background:
+      radial-gradient(circle at 8% 6%,#ffe7eb 0,rgba(255,231,235,0) 42%),
+      radial-gradient(circle at 92% 14%,#fff2dc 0,rgba(255,242,220,0) 40%),
+      radial-gradient(circle at 50% 96%,#ffeef1 0,rgba(255,238,241,0) 45%),
+      var(--bg);
+    color:var(--ink);
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  .paws{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5}
+  .paw{position:absolute;font-size:26px;opacity:.28;animation:float 7s ease-in-out infinite}
+  .paw:nth-child(1){top:12%;left:6%;animation-delay:0s}
+  .paw:nth-child(2){top:28%;right:8%;animation-delay:1.4s}
+  .paw:nth-child(3){bottom:22%;left:9%;animation-delay:2.6s}
+  .paw:nth-child(4){bottom:12%;right:10%;animation-delay:3.8s}
+  @keyframes float{0%,100%{transform:translateY(0) rotate(-8deg)}50%{transform:translateY(-14px) rotate(8deg)}}
+  .wrap{max-width:760px;margin:0 auto;padding:26px 16px 70px;position:relative;z-index:1}
+  .screen{display:none;animation:fade .42s ease}
+  .screen.active{display:block}
+  @keyframes fade{from{transform:translateY(12px)}to{transform:none}}
+
+  .card{background:var(--card);border:1px solid #fae9e7;border-radius:26px;box-shadow:var(--shadow)}
+  .home{padding:34px 24px 30px;text-align:center;overflow:hidden;position:relative}
+  .home:before{content:"";position:absolute;width:260px;height:260px;border-radius:50%;background:#fff0f2;top:-120px;right:-90px;z-index:0}
+  .home > *{position:relative;z-index:1}
+  .logoIcon{width:74px;height:74px;margin:0 auto 14px;display:block}
+  .kicker{display:inline-block;background:var(--soft);color:var(--deep);font-size:13px;font-weight:700;letter-spacing:2px;padding:5px 14px;border-radius:99px}
+  h1{font-size:32px;line-height:1.3;margin:16px 0 8px;color:#3f2f2f;letter-spacing:1px}
+  h1 .hl{color:var(--primary)}
+  .sub{color:var(--muted);font-size:15px;max-width:520px;margin:0 auto 22px}
+  .zoo{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:0 0 24px}
+  .zoo span{background:#fff8f6;border:1px solid var(--line);border-radius:99px;padding:6px 12px;font-size:13px;color:#7a6565}
+  .btn{border:0;cursor:pointer;font-family:inherit;font-size:16px;font-weight:700;border-radius:99px;padding:14px 30px;transition:.2s;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+  .btn:active{transform:scale(.97)}
+  .btn-primary{background:linear-gradient(135deg,#ff8fa3,#ff6b81);color:#fff;box-shadow:0 10px 22px rgba(255,107,129,.32)}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 28px rgba(255,107,129,.4)}
+  .btn-ghost{background:#fff;color:var(--deep);border:2px solid #ffd4dc}
+  .btn-ghost:hover{background:var(--soft)}
+  .meta{margin-top:16px;color:var(--muted);font-size:13px}
+  .rule{margin-top:22px;background:#fffaf7;border:1px dashed #ffd8cd;border-radius:18px;padding:14px 16px;text-align:left;font-size:13px;color:#8a7272}
+  .rule b{color:var(--deep)}
+
+  .quizHead{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .miniBtn{background:none;border:0;color:var(--muted);font-size:14px;cursor:pointer;font-family:inherit;padding:6px 4px}
+  .miniBtn:hover{color:var(--deep)}
+  .count{font-size:14px;font-weight:700;color:var(--deep)}
+  .progress{height:10px;background:var(--soft);border-radius:99px;overflow:hidden;margin-bottom:20px}
+  .progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--primary));border-radius:99px;transition:width .35s ease}
+  .qCard{padding:28px 24px 24px}
+  .qTag{display:inline-block;background:var(--soft);color:var(--deep);font-size:12px;font-weight:700;border-radius:8px;padding:3px 10px;margin-bottom:12px}
+  .qText{font-size:20px;font-weight:700;color:#3f2f2f;line-height:1.5;margin-bottom:20px}
+  .opt{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;background:#fff;border:2px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:11px;cursor:pointer;transition:.18s;font-size:15px;color:var(--ink);font-family:inherit}
+  .opt:hover{border-color:#ffc6d0;transform:translateY(-1px)}
+  .opt.sel{border-color:var(--primary);background:var(--soft);box-shadow:0 6px 16px rgba(255,107,129,.14)}
+  .letter{flex:0 0 28px;height:28px;border-radius:50%;background:var(--soft);color:var(--deep);display:grid;place-items:center;font-weight:800;font-size:13px}
+  .opt.sel .letter{background:var(--primary);color:#fff}
+  .qFoot{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:20px}
+  .btn-sm{padding:11px 22px;font-size:14px}
+  .hint{font-size:12px;color:var(--muted)}
+
+  .result{padding:30px 24px}
+  .resTop{text-align:center}
+  .resTop .kicker{margin-bottom:12px}
+  .avatar{width:116px;height:116px;border-radius:50%;margin:6px auto 14px;display:grid;place-items:center;font-size:62px;background:linear-gradient(145deg,#fff0f2,#ffe1e7);border:4px solid #fff;box-shadow:0 10px 26px rgba(232,85,110,.16)}
+  .animalName{font-size:28px;font-weight:800;color:#3f2f2f}
+  .animalTitle{color:var(--primary);font-weight:700;font-size:15px;margin-top:2px}
+  .fit{display:inline-block;margin-top:10px;background:var(--soft);color:var(--deep);border-radius:99px;padding:5px 16px;font-size:13px;font-weight:700}
+  .intro{margin:22px 0;font-size:15px;color:#6d5858;background:#fffaf7;border-left:4px solid var(--gold);padding:14px 16px;border-radius:0 14px 14px 0}
+  .secTitle{font-size:16px;font-weight:800;color:var(--deep);margin:24px 0 12px;display:flex;align-items:center;gap:8px}
+  .secTitle:before{content:"";width:6px;height:18px;border-radius:99px;background:var(--primary)}
+  .dims{display:grid;gap:12px}
+  .dimRow{display:grid;grid-template-columns:78px 1fr 62px;align-items:center;gap:10px;font-size:13px}
+  .dimName{color:#6d5858;font-weight:600}
+  .bar{height:11px;background:var(--soft);border-radius:99px;overflow:hidden}
+  .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--primary));border-radius:99px;transition:width .9s ease}
+  .dimVal{text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+  .list{list-style:none;display:grid;gap:9px}
+  .list li{position:relative;padding-left:24px;font-size:14px;color:#6d5858}
+  .list li:before{content:"";position:absolute;left:4px;top:9px;width:9px;height:9px;border-radius:50%;background:var(--primary)}
+  .list.warn li:before{background:var(--gold)}
+  .list.act li:before{background:#78c2a4}
+  .chipRow{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{background:var(--soft);color:var(--deep);border-radius:99px;padding:5px 13px;font-size:13px;font-weight:600}
+  .also{margin-top:14px;font-size:13px;color:var(--muted)}
+  .disclaimer{margin-top:26px;padding-top:16px;border-top:1px dashed var(--line);font-size:12px;color:var(--muted);text-align:center}
+  .resBtns{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:22px}
+
+  .toast{position:fixed;left:50%;bottom:30px;transform:translate(-50%,20px);background:#4a3a3a;color:#fff;padding:11px 20px;border-radius:99px;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:99;box-shadow:0 8px 20px rgba(0,0,0,.18);white-space:nowrap}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+
+  @media(max-width:600px){
+    .wrap{padding:18px 12px 56px}
+    .home{padding:26px 16px 24px;border-radius:22px}
+    h1{font-size:26px}
+    .sub{font-size:14px}
+    .zoo span{font-size:12px;padding:5px 10px}
+    .btn{padding:13px 24px;font-size:15px}
+    .qCard{padding:22px 16px 18px;border-radius:22px}
+    .qText{font-size:18px}
+    .opt{padding:12px 13px;font-size:14px;gap:10px}
+    .qFoot .btn-sm{padding:10px 16px;font-size:13px}
+    .result{padding:24px 16px;border-radius:22px}
+    .avatar{width:100px;height:100px;font-size:54px}
+    .animalName{font-size:25px}
+    .dimRow{grid-template-columns:70px 1fr 56px;font-size:12px}
+    .resBtns .btn{width:100%}
+    .paw{font-size:20px}
+  }
+</style>
+</head>
+<body>
+<div class="paws" aria-hidden="true">
+  <span class="paw">🐾</span><span class="paw">💗</span><span class="paw">🐾</span><span class="paw">💗</span>
+</div>
+
+<div class="wrap">
+
+  <!-- 首页 -->
+  <section class="screen active" id="home">
+    <div class="card home">
+      <svg class="logoIcon" viewBox="0 0 100 100" aria-hidden="true">
+        <circle cx="50" cy="50" r="46" fill="#ffe6eb"/>
+        <path d="M50 78C33 66 22 57 22 43c0-9 7-16 16-16 5 0 9 2 12 6 3-4 7-6 12-6 9 0 16 7 16 16 0 14-11 23-28 35z" fill="#ff6b81"/>
+        <ellipse cx="38" cy="45" rx="4" ry="6" fill="#fff" opacity=".85"/>
+        <circle cx="43" cy="37" r="3" fill="#ffb84d"/>
+      </svg>
+      <span class="kicker">原创趣味自评</span>
+      <h1>恋爱<span class="hl">动物</span>图鉴</h1>
+      <p class="sub">如果用一种动物形容你在恋爱里的样子，会是谁？<br>16 道题，找到属于你的那一只。</p>
+      <div class="zoo">
+        <span>🐺 狼</span><span>🐱 猫</span><span>🐶 狗</span><span>🦊 狐狸</span><span>🐻 熊</span><span>🦅 鹰</span>
+      </div>
+      <button class="btn btn-primary" id="startBtn">开始测试</button>
+      <div class="meta">约 3 分钟 · 16 道题 · 可随时返回修改答案</div>
+      <div class="rule">
+        <b>计分规则：</b>每题四个选项分别按 1 至 5 分计入一个维度。四个维度分别是亲密温度、独立空间、关系节奏、探索浪漫。每个维度取四题平均分，再与你心里最接近的动物画像比对，距离最近的那只就是结果。全部由答案算出，不随机。
+      </div>
+    </div>
+  </section>
+
+  <!-- 答题页 -->
+  <section class="screen" id="quiz">
+    <div class="quizHead">
+      <button class="miniBtn" id="homeBtn">← 返回首页</button>
+      <div class="count" id="count">第 1 / 16 题</div>
+    </div>
+    <div class="progress"><i id="progressBar"></i></div>
+    <div class="card qCard">
+      <div class="qTag" id="qTag">亲密温度</div>
+      <div class="qText" id="qText"></div>
+      <div id="options"></div>
+      <div class="qFoot">
+        <button class="btn btn-ghost btn-sm" id="prevBtn">上一题</button>
+        <button class="btn btn-primary btn-sm" id="nextBtn">下一题</button>
+      </div>
+      <div class="hint" style="margin-top:12px;text-align:center">答完可以回看修改，最后一题点「查看结果」</div>
+    </div>
+  </section>
+
+  <!-- 结果页 -->
+  <section class="screen" id="result">
+    <div class="card result">
+      <div class="resTop">
+        <span class="kicker">你的恋爱动物人格</span>
+        <div class="avatar" id="avatar">🐺</div>
+        <div class="animalName" id="animalName">狼</div>
+        <div class="animalTitle" id="animalTitle">忠诚守护者</div>
+        <div class="fit" id="fit">契合度 92%</div>
+      </div>
+
+      <div class="intro" id="intro"></div>
+
+      <div class="secTitle">你的四维画像</div>
+      <div class="dims" id="dims"></div>
+
+      <div class="secTitle">恋爱优势</div>
+      <ul class="list" id="strengths"></ul>
+
+      <div class="secTitle">容易踩的坑</div>
+      <ul class="list warn" id="cautions"></ul>
+
+      <div class="secTitle">给你的行动建议</div>
+      <ul class="list act" id="advice"></ul>
+
+      <div class="secTitle">标签与加分组合</div>
+      <div class="chipRow" id="tags"></div>
+      <div class="also" id="also"></div>
+
+      <div class="disclaimer">
+        这是一份原创趣味自评，用来帮助你观察自己的恋爱习惯，不构成专业心理诊断。<br>
+        结果只反映当下的你自己，随时可以重新测试。
+      </div>
+
+      <div class="resBtns">
+        <button class="btn btn-ghost" id="editBtn">返回修改答案</button>
+        <button class="btn btn-primary" id="againBtn">重新测试</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  var DIMS = [
+    {key:"warmth", label:"亲密温度"},
+    {key:"independence", label:"独立空间"},
+    {key:"pace", label:"关系节奏"},
+    {key:"adventure", label:"探索浪漫"}
+  ];
+
+  var QUESTIONS = [
+    {dim:"warmth", text:"伴侣难过时，你的第一反应通常是？", opts:[
+      ["立刻抱住对方，想把所有不安都赶走",5],
+      ["安静陪在身边，慢慢问清楚发生了什么",4],
+      ["说几句安慰的话，然后给对方一点空间",3],
+      ["不太知道怎么处理，希望对方先自己缓缓",1]]},
+    {dim:"independence", text:"一周里，你希望有多少完全属于自己的独处时间？", opts:[
+      ["越多越好，独处能给我充电",5],
+      ["隔几天有一次就挺好",4],
+      ["有一点就行，我更想和你待着",2],
+      ["几乎不需要，我们最好形影不离",1]]},
+    {dim:"pace", text:"遇到让你心动的人，你会怎么做？", opts:[
+      ["主动出击，尽快表明心意",5],
+      ["找机会多接触，慢慢靠近",4],
+      ["先观察，等对方释放信号",2],
+      ["很慢热，需要很久才敢行动",1]]},
+    {dim:"adventure", text:"你理想中的约会，更偏向哪一种？", opts:[
+      ["新鲜刺激，去做从没做过的事",5],
+      ["偶尔来点小惊喜就很好",4],
+      ["熟悉的日常最让人安心",2],
+      ["越稳定越好，最好不要有变化",1]]},
+    {dim:"warmth", text:"你多久会把「我想你」说出口？", opts:[
+      ["想到就说，几乎每天",5],
+      ["一周好几次",4],
+      ["偶尔，在重要时刻",3],
+      ["很少说，我觉得行动更重要",2]]},
+    {dim:"independence", text:"伴侣临时取消了一次约会，你的真实反应是？", opts:[
+      ["松了口气，正好做自己的事",5],
+      ["还好，正好休息一下",4],
+      ["有点失落，但能理解",2],
+      ["挺不开心，我期待了很久",1]]},
+    {dim:"pace", text:"关于确定恋爱关系，你的想法是？", opts:[
+      ["感觉对了就定下来，别拖",5],
+      ["相处一段时间再确认",4],
+      ["需要很久的观察和考虑",2],
+      ["我很难主动推进这件事",1]]},
+    {dim:"adventure", text:"选礼物时，你最看重什么？", opts:[
+      ["惊喜和创意，让人意想不到",5],
+      ["有心意，别太普通就好",4],
+      ["实用最重要",2],
+      ["礼物不重要，人在就行",1]]},
+    {dim:"warmth", text:"表达在乎时，你最常用的方式是？", opts:[
+      ["黏在一起，多一些肢体接触",5],
+      ["记住对方说过的每件小事",4],
+      ["用行动帮对方解决问题",3],
+      ["心里有数，但不怎么说出口",2]]},
+    {dim:"independence", text:"关于互相报备行程，你的态度是？", opts:[
+      ["各自自由，没必要事事报备",5],
+      ["重要的事说一声就好",4],
+      ["大部分行踪会主动说明",2],
+      ["希望彼此随时知道对方在哪",1]]},
+    {dim:"pace", text:"和伴侣吵架之后，你通常怎么处理？", opts:[
+      ["马上说开，矛盾不隔夜",5],
+      ["冷静一小会儿，当天聊清楚",4],
+      ["过几天情绪平了再说",2],
+      ["倾向于冷处理，让事情慢慢淡化",1]]},
+    {dim:"adventure", text:"提到旅行和探索，你更像下面哪一类？", opts:[
+      ["说走就走，越远越兴奋",5],
+      ["喜欢规划新奇的路线",4],
+      ["偶尔短途就满足了",2],
+      ["不太喜欢变动，宅着最舒服",1]]},
+    {dim:"warmth", text:"你心里理想的约会氛围是？", opts:[
+      ["深情对望，彻夜长谈",5],
+      ["牵手散步，慢慢聊",4],
+      ["一起做点有意思的事",3],
+      ["各忙各的，也很舒服",1]]},
+    {dim:"independence", text:"你能接受长期的异地关系吗？", opts:[
+      ["完全能，适当的空间刚刚好",5],
+      ["能，只要保持联系",4],
+      ["有点难，但愿意试试",2],
+      ["很难，我需要实实在在的陪伴",1]]},
+    {dim:"pace", text:"你更喜欢关系以什么样的速度前进？", opts:[
+      ["快节奏，目标明确",5],
+      ["顺其自然，但别太慢",4],
+      ["慢慢来，享受过程",2],
+      ["越慢越让我有安全感",1]]},
+    {dim:"adventure", text:"对你来说，浪漫最重要的是？", opts:[
+      ["惊喜和满满的仪式感",5],
+      ["心意和创意",4],
+      ["真诚和踏实",2],
+      ["平淡里的默契",1]]}
+  ];
+
+  var ANIMALS = [
+    {
+      id:"wolf", emoji:"🐺", name:"狼", title:"忠诚守护者",
+      profile:{warmth:4,independence:3,pace:2,adventure:2},
+      tags:["专一","守护","慢热"],
+      compat:["dog","bear"],
+      intro:"你把感情看得很重，一旦认定就愿意长期投入。你像狼一样重视「自己人」，会默默把伴侣划进自己的世界，再用持续的行动守护这份关系。",
+      strengths:["专一而长情，承诺在你心里分量很重","保护欲强，会让对方感到踏实安全","愿意为共同生活承担责任"],
+      cautions:["慢热会让对方一开始读不懂你的心意","有时把关心变成管束，边界感需要拿捏","不擅长表达，容易让对方去猜"],
+      advice:["把「我在乎你」说出口，哪怕一周一次","少一点试探，多一点直接的邀约","给彼此留一点各自的朋友和空间"]
+    },
+    {
+      id:"cat", emoji:"🐱", name:"猫", title:"独立慢热家",
+      profile:{warmth:3,independence:5,pace:2,adventure:3},
+      tags:["慢热","有审美","爱独处"],
+      compat:["fox","eagle"],
+      intro:"你珍惜独处，也珍惜真正走进你世界的人。你像猫一样慢热，外表淡定，心里有自己的节奏和审美，愿意留下的人会被你温柔以待。",
+      strengths:["情绪自洽，不容易被关系牵着走","眼光独到，看重精神层面的契合","一旦信任，会给出很深的陪伴"],
+      cautions:["太被动会让对方以为你不在意","需要空间时如果不说，容易被误解为冷淡","对细节挑剔，可能给对方压力"],
+      advice:["主动分享一次你的小世界，比如喜欢的歌","需要独处时提前说一声，别让人猜","把欣赏直接讲出来，别只放在心里"]
+    },
+    {
+      id:"dog", emoji:"🐶", name:"狗", title:"阳光陪伴者",
+      profile:{warmth:5,independence:1,pace:4,adventure:3},
+      tags:["热情","忠诚","黏人"],
+      compat:["wolf","bear"],
+      intro:"你热情、真诚，爱就把心意写在脸上。你像狗一样把伴侣当成最重要的人，喜欢一起吃喝玩乐，也愿意毫无保留地付出。",
+      strengths:["感染力强的乐观，让关系轻松愉快","忠诚可靠，愿意花时间陪伴","表达直接，对方很少需要猜"],
+      cautions:["过度黏人可能让对方喘不过气","情绪太外露，容易因为小事起落","付出太满，偶尔会忽略自己的需要"],
+      advice:["给对方留一点独处时间，也培养自己的爱好","先照顾好自己的情绪，再照顾关系","把期待说清楚，减少心里的委屈"]
+    },
+    {
+      id:"fox", emoji:"🦊", name:"狐狸", title:"灵动浪漫家",
+      profile:{warmth:4,independence:3,pace:4,adventure:5},
+      tags:["机智","会撩","有创意"],
+      compat:["cat","eagle"],
+      intro:"你聪明、会聊天，总能把平凡的日子过得有意思。你像狐狸一样看重精神共鸣，喜欢新鲜点子，也懂得用巧思经营浪漫。",
+      strengths:["幽默机智，聊天很少冷场","浪漫有创意，擅长制造惊喜","适应力强，愿意陪对方尝试不同生活"],
+      cautions:["太爱新鲜，可能让关系缺少稳定感","话说得漂亮，行动跟进有时会掉队","喜欢掌控节奏，容易忽略对方步调"],
+      advice:["把一次惊喜坚持成习惯，稳定感同样浪漫","少一点花招，多一点兑现承诺","多听听对方的节奏，别只顾自己畅想"]
+    },
+    {
+      id:"bear", emoji:"🐻", name:"熊", title:"踏实稳重派",
+      profile:{warmth:4,independence:2,pace:1,adventure:1},
+      tags:["可靠","温和","细水长流"],
+      compat:["wolf","dog"],
+      intro:"你温和、可靠，像熊一样给人一种踏实的感觉。你不追求戏剧化的桥段，更愿意用日复一日的稳定，把日子过成安心的样子。",
+      strengths:["情绪稳定，是很好的倾听者","说到做到，安全感给得很足","包容度高，能接住对方的小脾气"],
+      cautions:["节奏太慢，可能让急性子的对方着急","不擅长制造惊喜，关系容易变平淡","习惯忍着，问题容易攒到一起"],
+      advice:["偶尔主动安排一次约会，不用多隆重","有小情绪就说出来，别一个人扛","给日常加一点小变化，比如换条散步路线"]
+    },
+    {
+      id:"eagle", emoji:"🦅", name:"鹰", title:"自由探索者",
+      profile:{warmth:2,independence:5,pace:3,adventure:5},
+      tags:["独立","清醒","有远方"],
+      compat:["cat","fox"],
+      intro:"你独立、清醒，心里装着远方。你像鹰一样需要广阔的天空，既渴望亲密，也不愿为关系丢掉自我和追求。",
+      strengths:["目标清晰，能带动对方一起成长","独立清醒，不会在关系里失去自己","视野开阔，愿意一起探索世界"],
+      cautions:["太强调自由，容易让对方觉得靠近不了","情感表达偏克制，温柔容易被藏起来","不喜欢被安排，可能回避承诺"],
+      advice:["主动告诉对方你真正在乎的是什么","把自由和承诺放进同一份计划里","固定一个专属时间，让亲密有处可落"]
+    }
+  ];
+
+  var LETTERS = ["A","B","C","D"];
+  var answers = new Array(QUESTIONS.length).fill(null);
+  var current = 0;
+  var toastTimer = null;
+
+  function $(id){ return document.getElementById(id); }
+
+  function showScreen(id){
+    var all = document.querySelectorAll(".screen");
+    for(var i=0;i<all.length;i++){ all[i].classList.remove("active"); }
+    $(id).classList.add("active");
+    window.scrollTo(0,0);
+  }
+
+  function toast(msg){
+    var t = $("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    if(toastTimer){ clearTimeout(toastTimer); }
+    toastTimer = setTimeout(function(){ t.classList.remove("show"); },1800);
+  }
+
+  function dimLabel(key){
+    for(var i=0;i<DIMS.length;i++){ if(DIMS[i].key===key){ return DIMS[i].label; } }
+    return "";
+  }
+
+  function renderQuestion(){
+    var q = QUESTIONS[current];
+    $("count").textContent = "第 " + (current+1) + " / " + QUESTIONS.length + " 题";
+    $("progressBar").style.width = ((current+1)/QUESTIONS.length*100) + "%";
+    $("qTag").textContent = dimLabel(q.dim);
+    $("qText").textContent = q.text;
+    $("prevBtn").textContent = current===0 ? "返回首页" : "上一题";
+    $("nextBtn").textContent = current===QUESTIONS.length-1 ? "查看结果" : "下一题";
+
+    var box = $("options");
+    box.innerHTML = "";
+    q.opts.forEach(function(op,idx){
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "opt" + (answers[current]===idx ? " sel" : "");
+      btn.setAttribute("data-idx",idx);
+      var badge = document.createElement("span");
+      badge.className = "letter";
+      badge.textContent = LETTERS[idx];
+      var txt = document.createElement("span");
+      txt.textContent = op[0];
+      btn.appendChild(badge);
+      btn.appendChild(txt);
+      btn.addEventListener("click",function(){
+        answers[current] = idx;
+        var nodes = box.querySelectorAll(".opt");
+        for(var i=0;i<nodes.length;i++){ nodes[i].classList.remove("sel"); }
+        btn.classList.add("sel");
+      });
+      box.appendChild(btn);
+    });
+  }
+
+  function computeScores(){
+    var sums = {warmth:0,independence:0,pace:0,adventure:0};
+    for(var i=0;i<QUESTIONS.length;i++){
+      var q = QUESTIONS[i];
+      var pick = answers[i];
+      sums[q.dim] += (pick===null ? 0 : q.opts[pick][1]);
+    }
+    var avg = {};
+    DIMS.forEach(function(d){ avg[d.key] = sums[d.key]/4; });
+    return {sums:sums, avg:avg};
+  }
+
+  function matchAnimals(avg){
+    var list = ANIMALS.map(function(a){
+      var d2 = 0;
+      DIMS.forEach(function(dim){
+        var diff = avg[dim.key] - a.profile[dim.key];
+        d2 += diff*diff;
+      });
+      return {animal:a, distance:Math.sqrt(d2)};
+    });
+    list.sort(function(x,y){ return x.distance - y.distance; });
+    return list;
+  }
+
+  function fillList(id, items){
+    var ul = $(id);
+    ul.innerHTML = "";
+    items.forEach(function(s){
+      var li = document.createElement("li");
+      li.textContent = s;
+      ul.appendChild(li);
+    });
+  }
+
+  function renderResult(){
+    var data = computeScores();
+    var ranked = matchAnimals(data.avg);
+    var best = ranked[0].animal;
+    var gap = ranked[1].distance - ranked[0].distance;
+    var fit = Math.min(98, Math.max(80, Math.round(86 + gap*5)));
+
+    $("avatar").textContent = best.emoji;
+    $("animalName").textContent = best.name;
+    $("animalTitle").textContent = best.title;
+    $("fit").textContent = "契合度 " + fit + "%";
+    $("intro").textContent = best.intro;
+    fillList("strengths", best.strengths);
+    fillList("cautions", best.cautions);
+    fillList("advice", best.advice);
+
+    var dimBox = $("dims");
+    dimBox.innerHTML = "";
+    DIMS.forEach(function(d){
+      var sum = data.sums[d.key];
+      var pct = Math.round((sum-4)/16*100);
+      if(pct<0){ pct = 0; }
+      var row = document.createElement("div");
+      row.className = "dimRow";
+      row.innerHTML = '<span class="dimName"></span><div class="bar"><i></i></div><span class="dimVal"></span>';
+      row.querySelector(".dimName").textContent = d.label;
+      row.querySelector(".dimVal").textContent = sum + " / 20";
+      dimBox.appendChild(row);
+      var bar = row.querySelector(".bar i");
+      setTimeout(function(){ bar.style.width = pct + "%"; },80);
+    });
+
+    var tagBox = $("tags");
+    tagBox.innerHTML = "";
+    best.tags.forEach(function(t){
+      var c = document.createElement("span");
+      c.className = "chip";
+      c.textContent = "# " + t;
+      tagBox.appendChild(c);
+    });
+
+    var second = ranked[1].animal;
+    var names = best.compat.map(function(id){
+      for(var i=0;i<ANIMALS.length;i++){ if(ANIMALS[i].id===id){ return ANIMALS[i].emoji + " " + ANIMALS[i].name; } }
+      return "";
+    });
+    $("also").textContent = "另一面：你身上也有 " + second.emoji + " " + second.name + " 的影子。相处加分组合：" + names.join("、") + "（仅供娱乐参考）。";
+
+    showScreen("result");
+  }
+
+  $("startBtn").addEventListener("click",function(){
+    answers = new Array(QUESTIONS.length).fill(null);
+    current = 0;
+    renderQuestion();
+    showScreen("quiz");
+  });
+
+  $("homeBtn").addEventListener("click",function(){
+    showScreen("home");
+  });
+
+  $("prevBtn").addEventListener("click",function(){
+    if(current===0){ showScreen("home"); return; }
+    current--;
+    renderQuestion();
+  });
+
+  $("nextBtn").addEventListener("click",function(){
+    if(answers[current]===null){
+      toast("这一题还没选，先选一个再继续");
+      return;
+    }
+    if(current<QUESTIONS.length-1){
+      current++;
+      renderQuestion();
+      window.scrollTo(0,0);
+    }else{
+      renderResult();
+    }
+  });
+
+  $("editBtn").addEventListener("click",function(){
+    current = 0;
+    renderQuestion();
+    showScreen("quiz");
+    toast("已保留你的答案，可以逐题修改");
+  });
+
+  $("againBtn").addEventListener("click",function(){
+    answers = new Array(QUESTIONS.length).fill(null);
+    current = 0;
+    renderQuestion();
+    showScreen("quiz");
+  });
+})();
+</script>
+</body>
+</html>
